@@ -69,22 +69,6 @@ python scripts/analyze_genes.py --min-umi 500
 | `figures/{GENE}/` | Per-gene plots for the full cohort (10 donors) |
 | `subsample_figures/{GENE}/` | Per-gene plots for paired donors G120 + G133 |
 
-Each gene directory contains:
-- `scatter_{GENE}_exc_condition.png` — scatter plot with significance bracket
-- `pseudobulk_dot_{GENE}.png` — donor-level dot plot
-- `pct_expressing_by_donor_{GENE}.png` — % expressing per donor
-- `stats_{GENE}_*.txt` — full statistical report
-- *(KCNA1 only)* `combined_panel_KCNA1.png`, `violin_*.png`, `boxdot_*.png`
-
----
-
-## Caveats
-
-- Only **2 Control donors** — no statistical method can compensate for this fundamental limitation.
-- The `~ donor + condition` paired DESeq2 model has **1 residual degree of freedom**, making all padj = 1.00 expected.
-- Results should be interpreted as **hypothesis-generating**, not confirmatory.
-- See `ANALYSIS_REPORT.md` for full methodology, caveats, and interpretation.
-
 ---
 
 ## References

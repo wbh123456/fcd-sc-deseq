@@ -6,26 +6,6 @@ Single-cell RNA-seq analysis of ion-channel and receptor gene expression in exci
 
 ---
 
-## Key Finding
-
-> **0 of 13 genes are significantly differentially expressed** (DESeq2 pseudobulk, padj < 0.05).
-> The dataset has only 2 Control donors, leaving 1 residual degree of freedom — insufficient statistical power regardless of method.
-> Results are **exploratory only**. A previous (flawed) cell-level analysis found 12/13 significant — a textbook case of pseudoreplication inflating false discoveries.
-
----
-
-## Genes Analyzed
-
-13 ion-channel, receptor, and signaling genes relevant to cortical excitability and epilepsy:
-
-```
-KCNA1 (primary)  ADORA2A  KCNT1   GABRA5  SCN1A
-KCNK4            KCNMA1   CACNA1G CACNA1E CACNA1I
-HCN1             HCN2     MTOR
-```
-
----
-
 ## Setup
 
 ```bash

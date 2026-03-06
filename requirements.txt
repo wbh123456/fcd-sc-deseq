@@ -1,0 +1,12 @@
+scanpy==1.12
+anndata==0.12.10
+numpy==2.4.2
+pandas==2.3.3
+scipy==1.17.1
+matplotlib==3.10.8
+seaborn==0.13.2
+harmonypy==0.2.0
+celltypist==1.7.1
+pydeseq2>=0.4
+leidenalg==0.11.0
+umap-learn==0.5.11

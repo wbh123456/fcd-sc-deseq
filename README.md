@@ -1,0 +1,114 @@
+# fcd-sc-deseq
+
+Single-cell RNA-seq analysis of ion-channel and receptor gene expression in excitatory neurons from focal cortical dysplasia (FCD) patient tissue.
+
+**Dataset**: [GSE268807](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE268807) — 11 samples from 8 FCD donors (Kim et al., 2024 *iScience*).
+
+---
+
+## Key Finding
+
+> **0 of 13 genes are significantly differentially expressed** (DESeq2 pseudobulk, padj < 0.05).
+> The dataset has only 2 Control donors, leaving 1 residual degree of freedom — insufficient statistical power regardless of method.
+> Results are **exploratory only**. A previous (flawed) cell-level analysis found 12/13 significant — a textbook case of pseudoreplication inflating false discoveries.
+
+---
+
+## Genes Analyzed
+
+13 ion-channel, receptor, and signaling genes relevant to cortical excitability and epilepsy:
+
+```
+KCNA1 (primary)  ADORA2A  KCNT1   GABRA5  SCN1A
+KCNK4            KCNMA1   CACNA1G CACNA1E CACNA1I
+HCN1             HCN2     MTOR
+```
+
+---
+
+## Setup
+
+```bash
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+```
+
+---
+
+## Data
+
+Download the raw 10x Genomics files from [GEO GSE268807](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE268807) and place them in `data/raw/`.
+
+Expected filenames follow the pattern:
+```
+GSE268807_G120_D_FL_barcodes.tsv.gz
+GSE268807_G120_D_FL_features.tsv.gz
+GSE268807_G120_D_FL_matrix.mtx.gz
+...
+```
+
+---
+
+## Usage
+
+### Step 1 — Preprocess raw data (~20 min, run once)
+
+```bash
+python scripts/preprocess.py
+```
+
+Outputs: `GSE268807_processed_full.h5ad`, `GSE268807_raw_counts_full.h5ad`, `figures/umap_harmony_celltypist_full.png`
+
+### Step 2 — Gene expression analysis
+
+**Full cohort, pseudoreplication (default):**
+```bash
+python scripts/analyze_genes.py
+```
+
+**Paired donors only (G120 + G133), pseudoreplication:**
+```bash
+python scripts/analyze_genes.py --method pseudoreplication --donors G120,G133
+```
+
+**Full cohort, pseudobulk DESeq2:**
+```bash
+python scripts/analyze_genes.py --method pseudobulk
+```
+
+**With minimum UMI count filter:**
+```bash
+python scripts/analyze_genes.py --min-umi 500
+```
+
+## Outputs
+
+| Directory | Description |
+|---|---|
+| `figures/{GENE}/` | Per-gene plots for the full cohort (10 donors) |
+| `subsample_figures/{GENE}/` | Per-gene plots for paired donors G120 + G133 |
+
+Each gene directory contains:
+- `scatter_{GENE}_exc_condition.png` — scatter plot with significance bracket
+- `pseudobulk_dot_{GENE}.png` — donor-level dot plot
+- `pct_expressing_by_donor_{GENE}.png` — % expressing per donor
+- `stats_{GENE}_*.txt` — full statistical report
+- *(KCNA1 only)* `combined_panel_KCNA1.png`, `violin_*.png`, `boxdot_*.png`
+
+---
+
+## Caveats
+
+- Only **2 Control donors** — no statistical method can compensate for this fundamental limitation.
+- The `~ donor + condition` paired DESeq2 model has **1 residual degree of freedom**, making all padj = 1.00 expected.
+- Results should be interpreted as **hypothesis-generating**, not confirmatory.
+- See `ANALYSIS_REPORT.md` for full methodology, caveats, and interpretation.
+
+---
+
+## References
+
+1. **Kim J, et al.** (2024). Single-nucleus multiomics reveals the disrupted-in-epilepsy gene regulatory programs in focal cortical dysplasia. *iScience*, 27(12), 111337. [DOI: 10.1016/j.isci.2024.111337](https://doi.org/10.1016/j.isci.2024.111337)
+
+2. **Squair JW, et al.** (2021). Confronting false discoveries in single-cell differential expression. *Nature Communications*, 12, 5692. [DOI: 10.1038/s41467-021-25960-2](https://doi.org/10.1038/s41467-021-25960-2)

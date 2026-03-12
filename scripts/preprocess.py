@@ -38,6 +38,12 @@ sc.settings.n_jobs = 1
 
 DATA_DIR = os.path.join(os.path.dirname(__file__), '..', 'data', 'raw')
 SUBSAMPLE = None
+
+# Samples span Frontal, Temporal, Parietal, and Temporo-Occipital lobes.
+# G120 (age 2) and G150 (age 12) are pediatric donors.
+# Adult_Human_PrefrontalCortex is used because the major cell-type distinctions
+# (excitatory vs. inhibitory vs. glial) are conserved across cortical regions;
+# fine-grained subtype labels for non-frontal samples should be interpreted cautiously.
 CELLTYPIST_MODEL = 'Adult_Human_PrefrontalCortex.pkl'
 
 

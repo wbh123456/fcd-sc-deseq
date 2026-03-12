@@ -6,6 +6,28 @@ Single-cell RNA-seq analysis of ion-channel and receptor gene expression in exci
 
 ---
 
+## Sample Metadata
+
+Clinical and anatomical metadata from Kim et al. (2024) Table 1. Samples span multiple cortical lobes; two donors (G120, G150) are pediatric.
+
+| Specimen | Donor | Sex | Age | Onset | Lobe | Lateralization | Subtype |
+|---|---|---|---|---|---|---|---|
+| G120_F1_N | G120 | F | 2 | 1 | Frontal | L | Control |
+| G133_N_FL | G133 | — | — | — | Frontal | — | Control |
+| G120_D_FL | G120 | F | 2 | 1 | Frontal | L | FCD IIb |
+| G120_D_TL | G120 | F | 2 | 1 | Temporal | L | FCD IIb |
+| G129_D | G129 | M | 50 | 10 | Parietal | R | FCD IIb |
+| G133_D_FL | G133 | — | — | — | Frontal | — | FCD IIb |
+| G150_D | G150 | F | 12 | 1 | Frontal | R | FCD IIa |
+| G159_D | G159 | F | 18 | 11 | Frontal | R | FCD IIb |
+| G171_D | G171 | F | 32 | 6 | Frontal | R | FCD IIa |
+| G187_D | G187 | M | 31 | 18 | Temporal | L | FCD IIa |
+| G210_D | G210 | F | 31 | 20 | Temporo-Occipital | L | FCD IIb |
+
+**Note**: CellTypist annotation uses the `Adult_Human_PrefrontalCortex` model. Broad cell-type labels (excitatory neuron, inhibitory neuron, glial) are reliable across cortical regions; fine-grained subtypes for non-frontal or pediatric samples should be interpreted cautiously.
+
+---
+
 ## Setup
 
 ```bash

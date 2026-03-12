@@ -58,19 +58,32 @@ COND_PALETTE = {'Control': '#2d2d2d', 'Disease': '#c0392b'}
 COND_FILL = {'Control': '#4a4a4a', 'Disease': '#e74c3c'}
 
 # Sample metadata from Kim et al. (2024) iScience Table 1 (GSE268807).
-# Maps GEO sample IDs to donor, condition, and histological subtype.
+# Maps GEO sample IDs to donor, condition, histological subtype, and lobe.
+# Lobe info: samples span Frontal, Temporal, Parietal, and Temporo-Occipital cortex.
 SAMPLE_META = {
-    'G120_F1_N':  {'donor': 'G120', 'condition': 'Control', 'fcd_subtype': 'Normal'},
-    'G133_N_FL':  {'donor': 'G133', 'condition': 'Control', 'fcd_subtype': 'Normal'},
-    'G120_D_FL':  {'donor': 'G120', 'condition': 'Disease', 'fcd_subtype': 'FCD_IIb'},
-    'G120_D_TL':  {'donor': 'G120', 'condition': 'Disease', 'fcd_subtype': 'FCD_IIb'},
-    'G129_D':     {'donor': 'G129', 'condition': 'Disease', 'fcd_subtype': 'FCD_IIb'},
-    'G133_D_FL':  {'donor': 'G133', 'condition': 'Disease', 'fcd_subtype': 'FCD_IIb'},
-    'G150_D':     {'donor': 'G150', 'condition': 'Disease', 'fcd_subtype': 'FCD_IIa'},
-    'G159_D':     {'donor': 'G159', 'condition': 'Disease', 'fcd_subtype': 'FCD_IIb'},
-    'G171_D':     {'donor': 'G171', 'condition': 'Disease', 'fcd_subtype': 'FCD_IIa'},
-    'G187_D':     {'donor': 'G187', 'condition': 'Disease', 'fcd_subtype': 'FCD_IIa'},
-    'G210_D':     {'donor': 'G210', 'condition': 'Disease', 'fcd_subtype': 'FCD_IIb'},
+    'G120_F1_N':  {'donor': 'G120', 'condition': 'Control', 'fcd_subtype': 'Normal',   'lobe': 'Frontal'},
+    'G133_N_FL':  {'donor': 'G133', 'condition': 'Control', 'fcd_subtype': 'Normal',   'lobe': 'Frontal'},
+    'G120_D_FL':  {'donor': 'G120', 'condition': 'Disease', 'fcd_subtype': 'FCD_IIb',  'lobe': 'Frontal'},
+    'G120_D_TL':  {'donor': 'G120', 'condition': 'Disease', 'fcd_subtype': 'FCD_IIb',  'lobe': 'Temporal'},
+    'G129_D':     {'donor': 'G129', 'condition': 'Disease', 'fcd_subtype': 'FCD_IIb',  'lobe': 'Parietal'},
+    'G133_D_FL':  {'donor': 'G133', 'condition': 'Disease', 'fcd_subtype': 'FCD_IIb',  'lobe': 'Frontal'},
+    'G150_D':     {'donor': 'G150', 'condition': 'Disease', 'fcd_subtype': 'FCD_IIa',  'lobe': 'Frontal'},
+    'G159_D':     {'donor': 'G159', 'condition': 'Disease', 'fcd_subtype': 'FCD_IIb',  'lobe': 'Frontal'},
+    'G171_D':     {'donor': 'G171', 'condition': 'Disease', 'fcd_subtype': 'FCD_IIa',  'lobe': 'Frontal'},
+    'G187_D':     {'donor': 'G187', 'condition': 'Disease', 'fcd_subtype': 'FCD_IIa',  'lobe': 'Temporal'},
+    'G210_D':     {'donor': 'G210', 'condition': 'Disease', 'fcd_subtype': 'FCD_IIb',  'lobe': 'Temporo-Occipital'},
+}
+
+# Per-donor clinical metadata from Kim et al. (2024) Table 1.
+# G133 clinical data not provided in the original paper table for controls.
+DONOR_META = {
+    'G120': {'sex': 'F', 'age_at_surgery': 2,  'age_at_onset': 1,  'lateralization': 'L'},
+    'G129': {'sex': 'M', 'age_at_surgery': 50, 'age_at_onset': 10, 'lateralization': 'R'},
+    'G150': {'sex': 'F', 'age_at_surgery': 12, 'age_at_onset': 1,  'lateralization': 'R'},
+    'G159': {'sex': 'F', 'age_at_surgery': 18, 'age_at_onset': 11, 'lateralization': 'R'},
+    'G171': {'sex': 'F', 'age_at_surgery': 32, 'age_at_onset': 6,  'lateralization': 'R'},
+    'G187': {'sex': 'M', 'age_at_surgery': 31, 'age_at_onset': 18, 'lateralization': 'L'},
+    'G210': {'sex': 'F', 'age_at_surgery': 31, 'age_at_onset': 20, 'lateralization': 'L'},
 }
 
 EXPR_CMAP = LinearSegmentedColormap.from_list(
@@ -118,6 +131,13 @@ def get_donor(sample_id):
     if sid in SAMPLE_META:
         return SAMPLE_META[sid]['donor']
     return sid.split('_')[0]
+
+
+def get_lobe(sample_id):
+    sid = str(sample_id)
+    if sid in SAMPLE_META:
+        return SAMPLE_META[sid]['lobe']
+    return 'Unknown'
 
 
 def p_to_stars(p):
@@ -984,6 +1004,7 @@ def main():
 
     adata_full.obs['condition'] = adata_full.obs['sample_id'].apply(get_condition)
     adata_full.obs['donor'] = adata_full.obs['sample_id'].apply(get_donor)
+    adata_full.obs['lobe'] = adata_full.obs['sample_id'].apply(get_lobe)
     if 'celltypist_label' in adata_full.obs.columns:
         adata_full.obs['cell_type'] = adata_full.obs['celltypist_label'].apply(simplify_celltypist_label)
         adata_full.obs['cell_type_detailed'] = adata_full.obs['celltypist_label']
@@ -1010,6 +1031,7 @@ def main():
         )
     raw_adata.obs['condition'] = raw_adata.obs['sample_id'].apply(get_condition)
     raw_adata.obs['donor'] = raw_adata.obs['sample_id'].apply(get_donor)
+    raw_adata.obs['lobe'] = raw_adata.obs['sample_id'].apply(get_lobe)
     raw_adata_exc = raw_adata[exc_mask].copy()
 
     # --- Apply donor subsample ---

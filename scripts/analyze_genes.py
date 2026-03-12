@@ -271,15 +271,9 @@ def plot_pseudobulk_dot(sample_agg, gene, outdir, pb_mean_p=np.nan, method="pseu
                       linewidths=2.5, zorder=5)
 
     y_max = sample_agg['mean_expr'].max()
-    bar_y = y_max * 1.12
-    tip = y_max * 0.02
-    ax.plot([0, 0, 1, 1], [bar_y - tip, bar_y, bar_y, bar_y - tip],
-            color='#333333', linewidth=1.2, clip_on=False)
     stars = p_to_stars(pb_mean_p)
-    stat_label = "DESeq2 padj" if method == "pseudobulk" else "Wilcoxon padj"
-    bracket_label = f'{stars}\n{stat_label}' if stars != 'n/a' else stars
-    ax.text(0.5, bar_y + tip * 0.5, bracket_label,
-            ha='center', va='bottom', fontsize=10,
+    ax.text(0.5, y_max * 1.08, stars,
+            ha='center', va='bottom', fontsize=14,
             fontweight='bold', color='#333333')
 
     n_ctrl = (sample_agg['condition'] == 'Control').sum()
@@ -291,7 +285,7 @@ def plot_pseudobulk_dot(sample_agg, gene, outdir, pb_mean_p=np.nan, method="pseu
     ax.set_title(f'{gene} — Donor-Level Expression\nExcitatory Neurons',
                  fontsize=13, fontweight='bold', pad=12)
     ax.set_xlim(-0.5, 1.5)
-    ax.set_ylim(bottom=0, top=bar_y + y_max * 0.2)
+    ax.set_ylim(bottom=0, top=y_max * 1.25)
     sns.despine(ax=ax, left=False, bottom=True)
     fig.tight_layout()
     fig.savefig(os.path.join(outdir, f'pseudobulk_dot_{gene}.png'),
@@ -318,11 +312,11 @@ def plot_pct_expressing_by_donor(sample_agg, gene, outdir, pb_pct_p=np.nan, meth
                 color='#333333')
 
     ax.set_xticks(range(n))
-    ax.set_xticklabels(ordered['donor'], rotation=45, ha='right',
+    ax.set_xticklabels(ordered['donor'], rotation=0, ha='center',
                        fontsize=9)
 
     for i, (_, row) in enumerate(ordered.iterrows()):
-        ax.text(i, -0.02, f"n={int(row['n_cells'])}",
+        ax.text(i, -0.08, f"n={int(row['n_cells'])}",
                 ha='center', va='top', fontsize=7, color='#888888',
                 transform=ax.get_xaxis_transform())
 
@@ -333,15 +327,18 @@ def plot_pct_expressing_by_donor(sample_agg, gene, outdir, pb_pct_p=np.nan, meth
               edgecolor='#cccccc', fontsize=10)
 
     ax.set_ylabel(f'% excitatory neurons expressing {gene}', fontsize=11)
-    stat_label = "DESeq2 padj" if method == "pseudobulk" else "Wilcoxon padj"
-    title = (f'{gene} — % Expressing by Donor\n{stat_label} = {pb_pct_p:.3f}'
-             if not np.isnan(pb_pct_p)
-             else f'{gene} — % Expressing by Donor')
-    ax.set_title(title, fontsize=13, fontweight='bold', pad=12)
-    ax.set_ylim(bottom=0, top=ordered['pct_expressing'].max() * 1.25)
+    y_top = ordered['pct_expressing'].max()
+    stars = p_to_stars(pb_pct_p)
+    ax.text((n - 1) / 2, y_top * 1.12, stars,
+            ha='center', va='bottom', fontsize=14,
+            fontweight='bold', color='#333333')
+    ax.set_title(f'{gene} — % Expressing by Donor',
+                 fontsize=13, fontweight='bold', pad=12)
+    ax.set_ylim(bottom=0, top=y_top * 1.25)
     sns.despine(ax=ax, left=False, bottom=True)
     fig.tight_layout()
-    fig.subplots_adjust(bottom=0.22)
+    fig.subplots_adjust(bottom=0.18)
+    ax.tick_params(axis='x', pad=8)
     fig.savefig(os.path.join(outdir, f'pct_expressing_by_donor_{gene}.png'),
                 dpi=200, facecolor='white')
     plt.close(fig)
